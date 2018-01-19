@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>QueueClientLib</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Leonid Idelchik</Authors>
+    <Description>Client for QueueServer</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageTags>libs</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CoreNetLib" Version="1.0.4" />
+    <PackageReference Include="EQueueLib" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
