@@ -15,8 +15,8 @@ namespace QueueServerLib
             base.OnModelCreating(modelBuilder);
         }
 
-        internal DbSet<QueueClientInfo> QueueClientInfo { get; set; }
-        internal DbSet<ServiceInfo> ServiceInfo { get; set; }
-        internal DbSet<OperatorInfo> OperatorInfo { get; set; }
+        public DbSet<QueueClientInfo> QueueClientInfo { get; set; }
+        public DbSet<ServiceInfo> ServiceInfo { get; set; }
+        public DbSet<OperatorInfo> OperatorInfo { get; set; }
     }
 }
