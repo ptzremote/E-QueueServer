@@ -38,7 +38,7 @@ namespace EQueueServer
 
             //all prereq done, Run!
             server.Run();
-
+            
             //delay
             Console.ReadLine();
         }

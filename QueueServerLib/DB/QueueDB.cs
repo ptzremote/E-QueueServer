@@ -2,11 +2,20 @@
 using EQueueLib;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace QueueServerLib
 {
     public class QueueDB : IDb
     {
+        public static QueueDBContext QueueDbContext
+        {
+            get
+            {
+                return qDb == null ? throw new Exception("QueueDB must be initialize. Call Init() func.") : qDb;
+            }
+        }
+
         static QueueDBContext qDb;
 
         public static void Init()

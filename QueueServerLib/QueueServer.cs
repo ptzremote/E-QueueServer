@@ -1,6 +1,7 @@
 ﻿using CoreNetLib;
 using EQueueLib;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace QueueServerLib
 {
@@ -12,7 +13,9 @@ namespace QueueServerLib
 
         ILogger Logger { get; } =
             CoreNetLogging.LoggerFactory.CreateLogger<QueueServer>();
-        
+
+        public event EventHandler OnStateChange;
+
         public QueueServer()
             : this(new TcpHub(), new QueueDB())
         {
@@ -92,6 +95,7 @@ namespace QueueServerLib
             {
                 qData.QueueState = GetQueueState();
                 hub.SendToAll(qData);
+                OnStateChange?.Invoke(null, EventArgs.Empty);
             }
         }
     }
