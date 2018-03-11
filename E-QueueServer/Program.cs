@@ -20,7 +20,8 @@ namespace EQueueServer
             CoreNetLogging.LoggerFactory.ConfigureNLog("nlog.config");
 
             //initialize sqlite db (create db, seed data, migrate)
-            QueueDB.Init();
+            var qDb = new QueueDB();
+            qDb.Init();
 
 
             //using JSON serializer in tcp hub
@@ -31,7 +32,7 @@ namespace EQueueServer
             };
 
             //configure and create qServer instance
-            QueueServer server = new QueueServer(new TcpHub(netSettings), new QueueDB());
+            QueueServer server = new QueueServer(new TcpHub(netSettings), qDb);
 
             //initialize qServer with data from db
             server.QueueInitialize();

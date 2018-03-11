@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>QueueServerLib</PackageId>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
     <Authors>Leonid Idelchik</Authors>
     <Description>Queue Server based on QueueLib nad handle QueueClient request</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Get accessor to QueueDBContext in QueueDB</PackageReleaseNotes>
+    <PackageReleaseNotes>Optimize EF usage</PackageReleaseNotes>
     <Copyright>Leonid Idelchik</Copyright>
     <PackageTags>Queue Server</PackageTags>
   </PropertyGroup>

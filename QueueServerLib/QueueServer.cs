@@ -24,7 +24,6 @@ namespace QueueServerLib
 
         public QueueServer(IHub hub, IDb db)
         {
-            QueueDB.Init();
             this.hub = hub;
             this.db = db;
             qsState = new QueueServerState();
@@ -68,7 +67,15 @@ namespace QueueServerLib
                 if (qsState.TryGetNextClient(out QueueClientInfo nextClient))
                 {
                     var nextClientData = QueueDataFactory.GetNextClientData(nextClient);
+                    using (var qDb = new QueueDBContext())
+                    {
+                        var cClient = qDb.QueueClientInfo.Find(nextClient.Id);
+                        cClient.DequeueTime = nextClient.DequeueTime;
+                        cClient.WindowNumber = nextClient.WindowNumber;
+                        qDb.SaveChanges();
+                    }
                     db.SaveChanges();
+
                     SendDataToAll(nextClientData);
                 }
 
