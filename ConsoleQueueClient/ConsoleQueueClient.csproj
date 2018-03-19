@@ -60,15 +60,19 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QueueClientLib\QueueClientLib.csproj">
-      <Project>{341863A1-139D-4732-B298-C601060945E9}</Project>
-      <Name>QueueClientLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NLog.Extensions.Logging">
       <Version>1.0.0-rtm-rc6</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EQueueLib\EQueueLib.csproj">
+      <Project>{1106ee56-c086-4117-a99f-2baa1c1f4c4e}</Project>
+      <Name>EQueueLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QueueClientLib\QueueClientLib.csproj">
+      <Project>{c605a282-5840-41f5-a491-21e9b7c5410a}</Project>
+      <Name>QueueClientLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

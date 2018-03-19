@@ -39,9 +39,9 @@ namespace QueueServerLib
                 AddWindow(qData.WindowNumber, serviceList);
             }
 
-            void AddWindow(int window, List<ServiceInfo> windowList)
+            void AddWindow(int window, List<ServiceInfo> cServiceList)
             {
-                var curentKeyValue = new KeyValuePair<int, List<ServiceInfo>>(window, windowList);
+                var curentKeyValue = new KeyValuePair<int, List<ServiceInfo>>(window, cServiceList);
                 foreach (var w in qsState.FreeWindow)
                 {
                     if (w.Key == window)

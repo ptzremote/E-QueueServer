@@ -23,11 +23,10 @@ namespace QueueServerLib
             {
                 return null;
             }
-                
-            client.CompleteServiceTime = DateTime.Now;
-            client.OperatorInfo = db.GetOperatorById(qData.SelectedOperator.Id);
 
-            return QueueDataFactory.GetCompleteClientData(client);
+            var completeClient = db.SetCompleteServiceInfo(qData.ClientInfo.Id, qData.SelectedOperator.Id);
+
+            return QueueDataFactory.GetCompleteClientData(completeClient);
         }
     }
 }
