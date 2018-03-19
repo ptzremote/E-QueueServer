@@ -36,6 +36,13 @@ namespace QueueServerLib
             hub.Start();
         }
 
+        public void Restart()
+        {
+            qsState.ClientInQueue.Clear();
+            qsState.FreeWindow.Clear();
+            QueueInitialize();
+            SendDataToAll(new QueueData { Cmd = Command.ServerState});
+        }
         public void QueueInitialize()
         {
             foreach (var clientInfo in db.GetClientInQueue())

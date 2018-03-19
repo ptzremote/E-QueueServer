@@ -65,6 +65,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EQueueLib\EQueueLib.csproj">
+      <Project>{1106ee56-c086-4117-a99f-2baa1c1f4c4e}</Project>
+      <Name>EQueueLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QueueClientLib\QueueClientLib.csproj">
       <Project>{c605a282-5840-41f5-a491-21e9b7c5410a}</Project>
       <Name>QueueClientLib</Name>

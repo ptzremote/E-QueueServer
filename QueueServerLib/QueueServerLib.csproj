@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreNetLib" Version="1.0.4" />
+    <PackageReference Include="CoreNetLib" Version="1.0.6" />
     <PackageReference Include="EQueueLib" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.1" />
