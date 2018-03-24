@@ -192,5 +192,18 @@ namespace QueueServerLib
                 return cClient;
             }
         }
+
+        public async void DeleteClientInfo(int clientId)
+        {
+            using (var qDb = new QueueDBContext())
+            {
+                var clientInfo = await qDb.QueueClientInfo.FindAsync(clientId);
+                if (clientInfo != null)
+                {
+                    qDb.QueueClientInfo.Remove(clientInfo);
+                    await qDb.SaveChangesAsync();
+                }
+            }
+        }
     }
 }

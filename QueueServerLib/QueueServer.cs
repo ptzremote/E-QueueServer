@@ -10,6 +10,7 @@ namespace QueueServerLib
         internal IDb db;
         internal IHub hub;
         QueueServerState qsState;
+        public QueueServerHandler qsHandler;
 
         ILogger Logger { get; } =
             CoreNetLogging.LoggerFactory.CreateLogger<QueueServer>();
@@ -27,6 +28,7 @@ namespace QueueServerLib
             this.hub = hub;
             this.db = db;
             qsState = new QueueServerState();
+            qsHandler = new QueueServerHandler(db, qsState);
 
             hub.OnDataReceived += TcpServer_OnDataReceived;
         }
@@ -56,6 +58,8 @@ namespace QueueServerLib
             {
                 qsState.CurentClientNumber = lastClient.ClientNumber;
             }
+            else
+                qsState.CurentClientNumber = 0;
         }
 
         private void TcpServer_OnDataReceived(object sender, ReceivedDataEventArgs e)

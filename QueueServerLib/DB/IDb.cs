@@ -14,6 +14,7 @@ namespace QueueServerLib
         QueueClientInfo GetLastClient();
         QueueClientInfo GetLastDequeueClient();
         void AddNewClient(QueueClientInfo newClient);
+        void DeleteClientInfo(int clientId);
         void SaveChanges();
         QueueClientInfo SetCompleteServiceInfo(int clientId, int operatorId);
     }

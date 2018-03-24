@@ -69,5 +69,30 @@ namespace QueueServerLib
 
             return nextClient;
         }
+
+        public void UpdateCurrentClientNumber()
+        {
+                if (CurentClientNumberCanBeIncrement())
+                    CurentClientNumber++;
+                else
+                    CurentClientNumber = 1;
+
+            bool CurentClientNumberCanBeIncrement()
+            {
+                return CurentClientNumber != 0 &&
+                       CurentClientNumber < MaxQueueClientCount &&
+                       GetLastClient().EnqueueTime.Day <= DateTime.Now.Day;
+            }
+        }
+        internal QueueClientInfo GetLastClient()
+        {
+            var lastClientsList = new List<QueueClientInfo>();
+            foreach (var clientList in ClientInQueue.Values)
+            {
+                if (clientList.Count > 0)
+                    lastClientsList.Add(clientList.LastOrDefault());
+            }
+            return lastClientsList.Where(c => c.EnqueueTime == lastClientsList.Max(cl => cl.EnqueueTime)).FirstOrDefault();
+        }
     }
 }

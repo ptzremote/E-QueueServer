@@ -13,7 +13,7 @@ namespace QueueServerLib
         }
         internal override QueueData HandleData(QueueServerState qsState, IDb db)
         {
-            SetCurrentClientNumber();
+            qsState.UpdateCurrentClientNumber();
 
             var newClient = QueueClientInfo.CreateQueueClientInfo(qsState.CurentClientNumber, qData.SelectedService);
 
@@ -23,20 +23,7 @@ namespace QueueServerLib
 
             return QueueDataFactory.GetNewClientData(newClient);
 
-            void SetCurrentClientNumber()
-            {
-                if (CurentClientNumberCanBeIncrement())
-                    qsState.CurentClientNumber++;
-                else
-                    qsState.CurentClientNumber = 1;
-            }
 
-            bool CurentClientNumberCanBeIncrement()
-            {
-                return qsState.CurentClientNumber != 0 &&
-                       qsState.CurentClientNumber < qsState.MaxQueueClientCount &&
-                       db.GetLastClient().EnqueueTime.Day <= DateTime.Now.Day;
-            }
         }
     }
 }
