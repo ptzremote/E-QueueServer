@@ -1,14 +1,19 @@
-﻿namespace QueueServerLib
+﻿using EQueueLib;
+using System;
+
+namespace QueueServerLib
 {
     public class QueueServerHandler
     {
         IDb db;
-        QueueServerState qsState;
+        internal QueueServerState qsState;
 
-        internal QueueServerHandler(IDb db, QueueServerState qsState)
+        public event EventHandler OnStateChange;
+
+        internal QueueServerHandler(IDb db)
         {
             this.db = db;
-            this.qsState = qsState;
+            qsState = new QueueServerState();
         }
         public void DeleteClientInfo(int clientId)
         {
@@ -23,6 +28,21 @@
                     break;
                 }
             } 
+        }
+
+        public void StateChanged()
+        {
+            OnStateChange?.Invoke(null, EventArgs.Empty);
+        }
+
+        internal QueueState GetQueueState()
+        {
+            return new QueueState
+            {
+                ServiceList = db.GetServiceList(),
+                OperatorList = db.GetOperatorList(),
+                ClientInQueue = db.GetClientInQueue()
+            };
         }
     }
 }

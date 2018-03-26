@@ -2,119 +2,73 @@
 using EQueueLib;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace QueueServerLib
 {
     public class QueueServer
     {
         internal IDb db;
-        internal IHub hub;
-        QueueServerState qsState;
         public QueueServerHandler qsHandler;
-
-        ILogger Logger { get; } =
-            CoreNetLogging.LoggerFactory.CreateLogger<QueueServer>();
-
-        public event EventHandler OnStateChange;
+        internal List<IQueueConnectionAdapter> connAdapter;
 
         public QueueServer()
-            : this(new TcpHub(), new QueueDB())
+            : this(new QueueDB())
         {
 
         }
 
-        public QueueServer(IHub hub, IDb db)
+        public QueueServer(IDb db)
         {
-            this.hub = hub;
             this.db = db;
-            qsState = new QueueServerState();
-            qsHandler = new QueueServerHandler(db, qsState);
+            qsHandler = new QueueServerHandler(db);
+            connAdapter = new List<IQueueConnectionAdapter>();
+        }
 
-            hub.OnDataReceived += TcpServer_OnDataReceived;
+        public void UseTcp()
+        {
+            connAdapter.Add(new QueueTcpConnection(qsHandler));
+        }
+
+        private void Conn_OnDataReceived(IQueueConnectionAdapter sender, EventArgs e)
+        {
+            sender.HandleData(db, e);
         }
 
         public void Run()
         {
-            hub.Start();
+            foreach (var conn in connAdapter)
+            {
+                conn.Start();
+                conn.OnDataReceived += Conn_OnDataReceived;
+            }
         }
 
         public void Restart()
         {
-            qsState.ClientInQueue.Clear();
-            qsState.FreeWindow.Clear();
+            qsHandler.qsState.ClientInQueue.Clear();
+            qsHandler.qsState.FreeWindow.Clear();
             QueueInitialize();
-            SendDataToAll(new QueueData { Cmd = Command.ServerState});
+            foreach (var conn in connAdapter)
+            {
+                conn.SendDataToAll(new QueueData { Cmd = Command.ServerState });
+            }
         }
         public void QueueInitialize()
         {
             foreach (var clientInfo in db.GetClientInQueue())
             {
-                qsState.ClientInQueue.AddOrUpdateNewClient(clientInfo);
+                qsHandler.qsState.ClientInQueue.AddOrUpdateNewClient(clientInfo);
             }
 
             var lastClient = db.GetLastClient();
 
             if (lastClient != null)
             {
-                qsState.CurentClientNumber = lastClient.ClientNumber;
+                qsHandler.qsState.CurentClientNumber = lastClient.ClientNumber;
             }
             else
-                qsState.CurentClientNumber = 0;
-        }
-
-        private void TcpServer_OnDataReceived(object sender, ReceivedDataEventArgs e)
-        {
-            var receivedQueueData = (QueueData)e.Data;
-
-            //TODO: change to interlock
-            lock (this)
-            {
-                Logger.LogTrace($"Command {receivedQueueData.Cmd} received.");
-                var handler = DataHandlerFactory.MakeHandler(receivedQueueData);
-                var handledData = handler.Handle(qsState, db);
-
-                db.SaveChanges();
-
-                if (qsState.TryGetNextClient(out QueueClientInfo nextClient))
-                {
-                    var nextClientData = QueueDataFactory.GetNextClientData(nextClient);
-                    using (var qDb = new QueueDBContext())
-                    {
-                        var cClient = qDb.QueueClientInfo.Find(nextClient.Id);
-                        cClient.DequeueTime = nextClient.DequeueTime;
-                        cClient.WindowNumber = nextClient.WindowNumber;
-                        qDb.SaveChanges();
-                    }
-                    db.SaveChanges();
-
-                    SendDataToAll(nextClientData);
-                }
-
-                if (handledData != null)
-                {
-                    SendDataToAll(handledData);
-                }
-            }
-        }
-
-        internal QueueState GetQueueState()
-        {
-            return new QueueState
-            {
-                ServiceList = db.GetServiceList(),
-                OperatorList = db.GetOperatorList(),
-                ClientInQueue = db.GetClientInQueue()
-            };
-        }
-
-        void SendDataToAll(QueueData qData)
-        {
-            if (qData != null)
-            {
-                qData.QueueState = GetQueueState();
-                hub.SendToAll(qData);
-                OnStateChange?.Invoke(null, EventArgs.Empty);
-            }
+                qsHandler.qsState.CurentClientNumber = 0;
         }
     }
 }
