@@ -32,7 +32,7 @@ namespace QueueServerLib
 
         private void Conn_OnDataReceived(IQueueConnectionAdapter sender, EventArgs e)
         {
-            sender.HandleData(db, e);
+            sender.HandleData(db, e, sender);
         }
 
         public void Run()
@@ -60,15 +60,6 @@ namespace QueueServerLib
             {
                 qsHandler.qsState.ClientInQueue.AddOrUpdateNewClient(clientInfo);
             }
-
-            var lastClient = db.GetLastClient();
-
-            if (lastClient != null)
-            {
-                qsHandler.qsState.CurentClientNumber = lastClient.ClientNumber;
-            }
-            else
-                qsHandler.qsState.CurentClientNumber = 0;
         }
     }
 }

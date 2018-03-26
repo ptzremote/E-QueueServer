@@ -13,10 +13,22 @@ namespace QueueServerLib
         ILogger Logger { get; } =
             CoreNetLogging.LoggerFactory.CreateLogger<QueueServerState>();
         public int MaxQueueClientCount { get; set; } = 100;
-        public int CurentClientNumber { get; set; }
+        public int CurentClientNumber { get; private set; }
         public ConcurrentDictionary<ServiceInfo, List<QueueClientInfo>> ClientInQueue { get; set; } = new ConcurrentDictionary<ServiceInfo, List<QueueClientInfo>>();
         public List<KeyValuePair<int, List<ServiceInfo>>> FreeWindow { get; set; } = new List<KeyValuePair<int, List<ServiceInfo>>>();
 
+        Func<QueueClientInfo> lastClientFromDb;
+
+        public QueueServerState(Func<QueueClientInfo> lastClient)
+        {
+            lastClientFromDb = lastClient;
+            if (lastClientFromDb() != null && lastClientFromDb().EnqueueTime.Day <= DateTime.Now.Day)
+            {
+                CurentClientNumber = lastClientFromDb().ClientNumber;
+            }
+            else
+                CurentClientNumber = 0;
+        }
         public bool TryGetNextClient(out QueueClientInfo nextClient)
         {
             nextClient = null;
@@ -81,18 +93,9 @@ namespace QueueServerLib
             {
                 return CurentClientNumber != 0 &&
                        CurentClientNumber < MaxQueueClientCount &&
-                       GetLastClient().EnqueueTime.Day <= DateTime.Now.Day;
+                       lastClientFromDb() != null &&
+                       lastClientFromDb().EnqueueTime.Day <= DateTime.Now.Day;
             }
-        }
-        internal QueueClientInfo GetLastClient()
-        {
-            var lastClientsList = new List<QueueClientInfo>();
-            foreach (var clientList in ClientInQueue.Values)
-            {
-                if (clientList.Count > 0)
-                    lastClientsList.Add(clientList.LastOrDefault());
-            }
-            return lastClientsList.Where(c => c.EnqueueTime == lastClientsList.Max(cl => cl.EnqueueTime)).FirstOrDefault();
         }
     }
 }

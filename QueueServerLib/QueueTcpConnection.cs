@@ -42,8 +42,11 @@ namespace QueueServerLib
         {
             hub.Start();
         }
-        public void HandleData(IDb db, EventArgs e)
+        public void HandleData(IDb db, EventArgs e, IQueueConnectionAdapter conn)
         {
+            if (!(conn is QueueTcpConnection))
+                return;
+
             var receivedDataArgs = (ReceivedDataEventArgs)e;
             var receivedQueueData = (QueueData)receivedDataArgs.Data;
 

@@ -8,7 +8,7 @@ namespace QueueServerLib
 
         event QueueConnectionHandler OnDataReceived;
 
-        void HandleData(IDb db, EventArgs e);
+        void HandleData(IDb db, EventArgs e, IQueueConnectionAdapter conn);
 
         void Start();
     }

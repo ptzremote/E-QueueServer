@@ -13,7 +13,7 @@ namespace QueueServerLib
         internal QueueServerHandler(IDb db)
         {
             this.db = db;
-            qsState = new QueueServerState();
+            qsState = new QueueServerState(db.GetLastClient);
         }
         public void DeleteClientInfo(int clientId)
         {
